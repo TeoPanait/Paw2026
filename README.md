@@ -1,5 +1,6 @@
 # Lab 7 - Autentificare si Autorizare in ASP.NET Core MVC
-
+### Demo video :
+https://youtube.com/shorts/2lumT6aAauU?is=dtTWwssp8vADhEvQ
 Aici am rezolvat exercitiile pentru implementarea securitatii pe articole:
 
 **Ex 1 - Setare automata a autorului la creare:**
