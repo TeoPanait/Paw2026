@@ -1,0 +1,40 @@
+@model Lab07.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Log In";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4">Autentifică-te</h2>
+
+                @if(!string.IsNullOrEmpty(Model.ReturnUrl))
+                {
+                    <p class="text-muted text-center small mb-3">Ai fost redirectionat aici pentru a accesa o pagină securizată.</p>
+                }
+
+                <form asp-controller="Auth" asp-action="Login" method="post">
+                    <input type="hidden" asp-for="ReturnUrl" />
+                    
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Adresă de Email</label>
+                        <input asp-for="Email" class="form-control" placeholder="admin@site.com (pt a fi admin)" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Password" class="form-label">Parolă</label>
+                        <input asp-for="Password" class="form-control" placeholder="Orice parolă va funcționa în test" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-success fw-bold">Log In</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

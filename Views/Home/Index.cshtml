@@ -51,8 +51,20 @@
                 </div>
                 <div class="card-footer">
                     <small class="text-muted">@article.CategoryName — @article.PublishedAt.ToShortDateString()</small>
-                    <a asp-controller="Articles" asp-action="Details" asp-route-id="@article.Id"
-                       class="btn btn-sm btn-info float-end">Citește</a>
+                    <div class="mt-2 d-flex justify-content-between align-items-center">
+                        <a asp-controller="Articles" asp-action="Details" asp-route-id="@article.Id"
+                           class="btn btn-sm btn-info">Detalii</a>
+
+                        @if (User.Identity?.IsAuthenticated == true && (User.IsInRole("Admin") || article.UserId == User.Identity.Name))
+                        {
+                            <div>
+                                <a asp-controller="Articles" asp-action="Edit" asp-route-id="@article.Id"
+                                   class="btn btn-sm btn-warning">Edit</a>
+                                <a asp-controller="Articles" asp-action="Delete" asp-route-id="@article.Id"
+                                   class="btn btn-sm btn-danger">Șterge</a>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
         </div>

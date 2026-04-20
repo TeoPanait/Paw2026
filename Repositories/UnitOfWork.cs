@@ -9,7 +9,6 @@ public class UnitOfWork : IUnitOfWork
 
     private IArticleRepository? _articleRepository;
     private ICategoryRepository? _categoryRepository;
-    private IRepository<User>? _userRepository;
 
     public UnitOfWork(AppDbContext context)
     {
@@ -21,9 +20,6 @@ public class UnitOfWork : IUnitOfWork
 
     public ICategoryRepository CategoryRepository
         => _categoryRepository ??= new CategoryRepository(_context);
-
-    public IRepository<User> UserRepository
-        => _userRepository ??= new Repository<User>(_context);
 
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
         => await _context.SaveChangesAsync(cancellationToken);

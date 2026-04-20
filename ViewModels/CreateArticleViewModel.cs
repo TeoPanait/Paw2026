@@ -17,11 +17,9 @@ public class CreateArticleViewModel
     [Display(Name = "Categorie")]
     public int CategoryId { get; set; }
 
-    [Display(Name = "Autor")]
-    public int? UserId { get; set; }
+    public string? UserId { get; set; }
 
     public IFormFile? Upload { get; set; }
 
     public List<SelectListItem> Categories { get; set; } = new();
-    public List<SelectListItem> Users { get; set; } = new();
 }

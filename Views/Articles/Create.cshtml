@@ -30,15 +30,6 @@
             </div>
 
             <div class="mb-3">
-                <label asp-for="UserId" class="form-label"></label>
-                <select asp-for="UserId" class="form-select"
-                        asp-items="Model.Users">
-                    <option value="">-- Selectați --</option>
-                </select>
-                <span asp-validation-for="UserId" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
                 <label class="form-label">Imagine articol (opțional)</label>
                 <input type="file" name="Upload" class="form-control" accept="image/*" />
             </div>

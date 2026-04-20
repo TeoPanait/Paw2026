@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using Lab07.Services;
 using Lab07.ViewModels;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lab07.Controllers;
@@ -30,7 +32,8 @@ public class HomeController : Controller
                 Content = a.Content,
                 PublishedAt = a.PublishedAt,
                 CategoryName = a.Category?.Name ?? "N/A",
-                AuthorName = a.User?.Name ?? "N/A",
+                AuthorName = a.UserId ?? "N/A",
+                UserId = a.UserId,
                 ImagePath = a.ImagePath
             }).ToList(),
             TotalArticles = totalArticles,

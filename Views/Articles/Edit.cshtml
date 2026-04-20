@@ -32,14 +32,7 @@
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="UserId" class="form-label"></label>
-                <select asp-for="UserId" class="form-select"
-                        asp-items="Model.Users">
-                    <option value="">-- Selectați --</option>
-                </select>
-                <span asp-validation-for="UserId" class="text-danger"></span>
-            </div>
+            <!-- ascunde selectie autor -->
 
             <div class="mb-3">
                 @if (Model.ExistingImagePath != null)

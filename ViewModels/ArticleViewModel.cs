@@ -8,5 +8,6 @@ public class ArticleViewModel
     public DateTime PublishedAt { get; set; } = DateTime.Now;
     public string CategoryName { get; set; } = string.Empty;
     public string AuthorName { get; set; } = string.Empty;
+    public string? UserId { get; set; }
     public string? ImagePath { get; set; }
 }

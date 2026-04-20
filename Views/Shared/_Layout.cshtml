@@ -18,6 +18,22 @@
                 <a class="nav-link" asp-controller="Articles" asp-action="Index">Articole</a>
                 <a class="nav-link" asp-controller="Articles" asp-action="Create">Articol nou</a>
             </div>
+
+            <div class="navbar-nav ms-auto align-items-center">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <span class="nav-link text-success fw-bold">@User.Identity.Name?.Split('@')[0]</span>
+                    <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                        <button type="submit" class="nav-link btn btn-link border-0">Sign Out</button>
+                    </form>
+                }
+                else
+                {
+                    <span class="nav-link text-secondary fst-italic me-2">Vizitator</span>
+                    <a class="nav-link" asp-controller="Auth" asp-action="Login">Log in</a>
+                    <a class="nav-link" asp-controller="Auth" asp-action="Register">Cont nou</a>
+                }
+            </div>
         </div>
     </nav>
 

@@ -1,6 +1,7 @@
 using Lab07.Models;
 using Lab07.Services;
 using Lab07.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -10,7 +11,6 @@ public class ArticlesController : Controller
 {
     private readonly IArticleService _articleService;
     private readonly ICategoryService _categoryService;
-    private readonly IUserService _userService;
     private readonly IWebHostEnvironment _env;
 
     private const int PageSize = 5;
@@ -18,12 +18,10 @@ public class ArticlesController : Controller
     public ArticlesController(
         IArticleService articleService,
         ICategoryService categoryService,
-        IUserService userService,
         IWebHostEnvironment env)
     {
         _articleService = articleService;
         _categoryService = categoryService;
-        _userService = userService;
         _env = env;
     }
 
@@ -45,7 +43,8 @@ public class ArticlesController : Controller
             Content = a.Content,
             PublishedAt = a.PublishedAt,
             CategoryName = a.Category?.Name ?? "N/A",
-            AuthorName = a.User?.Name ?? "N/A",
+            AuthorName = a.UserId ?? "N/A",
+            UserId = a.UserId,
             ImagePath = a.ImagePath
         }).ToList();
 
@@ -72,7 +71,8 @@ public class ArticlesController : Controller
             Content = article.Content,
             PublishedAt = article.PublishedAt,
             CategoryName = article.Category?.Name ?? "N/A",
-            AuthorName = article.User?.Name ?? "N/A",
+            AuthorName = article.UserId ?? "N/A",
+            UserId = article.UserId,
             ImagePath = article.ImagePath
         };
 
@@ -80,6 +80,7 @@ public class ArticlesController : Controller
     }
 
     // GET: /Articles/Create
+    [Authorize]
     public async Task<IActionResult> Create(CancellationToken cancellationToken)
     {
         var viewModel = new CreateArticleViewModel();
@@ -90,6 +91,7 @@ public class ArticlesController : Controller
     // POST: /Articles/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize]
     public async Task<IActionResult> Create(CreateArticleViewModel viewModel, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
@@ -103,7 +105,7 @@ public class ArticlesController : Controller
             Title = viewModel.Title,
             Content = viewModel.Content,
             CategoryId = viewModel.CategoryId,
-            UserId = viewModel.UserId
+            UserId = User.Identity?.Name
         };
 
         if (viewModel.Upload != null)
@@ -120,6 +122,7 @@ public class ArticlesController : Controller
     }
 
     // GET: /Articles/Edit/5
+    [Authorize]
     public async Task<IActionResult> Edit(int? id, CancellationToken cancellationToken)
     {
         if (id == null)
@@ -128,6 +131,9 @@ public class ArticlesController : Controller
         var article = await _articleService.GetByIdAsync(id.Value, cancellationToken);
         if (article == null)
             return NotFound();
+
+        if (!await IsOwnerOrAdmin(article, cancellationToken))
+            return Forbid();
 
         var viewModel = new EditArticleViewModel
         {
@@ -146,6 +152,7 @@ public class ArticlesController : Controller
     // POST: /Articles/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize]
     public async Task<IActionResult> Edit(int id, EditArticleViewModel viewModel, CancellationToken cancellationToken)
     {
         if (id != viewModel.Id)
@@ -161,10 +168,12 @@ public class ArticlesController : Controller
         if (article == null)
             return NotFound();
 
+        if (!await IsOwnerOrAdmin(article, cancellationToken))
+            return Forbid();
+
         article.Title = viewModel.Title;
         article.Content = viewModel.Content;
         article.CategoryId = viewModel.CategoryId;
-        article.UserId = viewModel.UserId;
 
         if (viewModel.Upload != null)
         {
@@ -184,6 +193,7 @@ public class ArticlesController : Controller
     }
 
     // GET: /Articles/Delete/5
+    [Authorize]
     public async Task<IActionResult> Delete(int? id, CancellationToken cancellationToken)
     {
         if (id == null)
@@ -193,6 +203,9 @@ public class ArticlesController : Controller
         if (article == null)
             return NotFound();
 
+        if (!await IsOwnerOrAdmin(article, cancellationToken))
+            return Forbid();
+
         var viewModel = new ArticleViewModel
         {
             Id = article.Id,
@@ -200,7 +213,8 @@ public class ArticlesController : Controller
             Content = article.Content,
             PublishedAt = article.PublishedAt,
             CategoryName = article.Category?.Name ?? "N/A",
-            AuthorName = article.User?.Name ?? "N/A"
+            AuthorName = article.UserId ?? "N/A",
+            UserId = article.UserId
         };
 
         return View(viewModel);
@@ -209,8 +223,16 @@ public class ArticlesController : Controller
     // POST: /Articles/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
+    [Authorize]
     public async Task<IActionResult> DeleteConfirmed(int id, CancellationToken cancellationToken)
     {
+        var article = await _articleService.GetByIdAsync(id, cancellationToken);
+        if (article == null)
+            return NotFound();
+
+        if (!await IsOwnerOrAdmin(article, cancellationToken))
+            return Forbid();
+
         await _articleService.DeleteAsync(id, cancellationToken);
         return RedirectToAction(nameof(Index));
     }
@@ -221,10 +243,13 @@ public class ArticlesController : Controller
         viewModel.Categories = categories
             .Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name })
             .ToList();
+    }
 
-        var users = await _userService.GetAllAsync(cancellationToken);
-        viewModel.Users = users
-            .Select(u => new SelectListItem { Value = u.Id.ToString(), Text = u.Name })
-            .ToList();
+    private async Task<bool> IsOwnerOrAdmin(Article article, CancellationToken cancellationToken)
+    {
+        if (User.IsInRole("Admin"))
+            return true;
+
+        return article.UserId == User.Identity?.Name;
     }
 }

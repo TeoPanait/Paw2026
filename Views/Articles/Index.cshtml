@@ -6,7 +6,10 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Articole</h1>
-    <a asp-action="Create" class="btn btn-primary">+ Articol nou</a>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <a asp-action="Create" class="btn btn-primary">+ Articol nou</a>
+    }
 </div>
 
 @if (Model == null || !Model.Any())
@@ -41,10 +44,15 @@ else
                         <div class="mt-2">
                             <a asp-action="Details" asp-route-id="@article.Id"
                                class="btn btn-sm btn-info">Detalii</a>
-                            <a asp-action="Edit" asp-route-id="@article.Id"
-                               class="btn btn-sm btn-warning">Editare</a>
-                            <a asp-action="Delete" asp-route-id="@article.Id"
-                               class="btn btn-sm btn-danger">Ștergere</a>
+
+                            <!-- ascunde butoanele pt vizitatori -->
+                            @if (User.Identity?.IsAuthenticated == true && (User.IsInRole("Admin") || article.UserId == User.Identity.Name))
+                            {
+                                <a asp-action="Edit" asp-route-id="@article.Id"
+                                   class="btn btn-sm btn-warning">Editare</a>
+                                <a asp-action="Delete" asp-route-id="@article.Id"
+                                   class="btn btn-sm btn-danger">Ștergere</a>
+                            }
                         </div>
                     </div>
                 </div>

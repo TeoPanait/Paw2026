@@ -24,10 +24,14 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-body">
-                <a asp-action="Edit" asp-route-id="@Model.Id"
-                   class="btn btn-warning w-100 mb-2">Editare</a>
-                <a asp-action="Delete" asp-route-id="@Model.Id"
-                   class="btn btn-danger w-100 mb-2">Ștergere</a>
+                <!-- ascunde butoanele pt vizitatori -->
+                @if (User.Identity?.IsAuthenticated == true && (User.IsInRole("Admin") || Model.UserId == User.Identity.Name))
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.Id"
+                       class="btn btn-warning w-100 mb-2">Editare</a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id"
+                       class="btn btn-danger w-100 mb-2">Ștergere</a>
+                }
                 <a asp-action="Index" class="btn btn-secondary w-100">Înapoi</a>
             </div>
         </div>

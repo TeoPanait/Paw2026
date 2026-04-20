@@ -1,0 +1,40 @@
+@model Lab07.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4">Creează Cont Nou</h2>
+
+                <form asp-controller="Auth" asp-action="Register" method="post">
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Introdu o adresă de email</label>
+                        <input asp-for="Email" class="form-control" placeholder="user@nou.com" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">Parolă nouă</label>
+                        <input asp-for="Password" class="form-control" placeholder="Introdu 12345" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="ConfirmPassword" class="form-label">Confirmă parola</label>
+                        <input asp-for="ConfirmPassword" class="form-control" placeholder="Repetă 12345" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary fw-bold">Sign Up (Cont Nou)</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
